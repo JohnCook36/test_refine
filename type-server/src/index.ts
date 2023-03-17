@@ -2,6 +2,7 @@ import { AppDataSource } from "./data-source"
 import {Request, Response} from "express";
 import express = require("express");
 import cors = require("cors");
+import {CryptoV2} from "./entity/CryptoV2";
 
 AppDataSource
     .initialize()
@@ -20,35 +21,35 @@ app.use(cors({
 }))
 
 app.get("/cryptos", async function (req: Request, res: Response) {
-    const cryptos = await AppDataSource.query('SELECT * FROM crypto_v2')
+    const cryptos = await AppDataSource.getRepository(CryptoV2).find()
     res.json(cryptos)
 })
 
 app.get("/cryptos/:id", async function (req: Request, res: Response) {
-    const id = req.params.id
-    const oneCrypto = await AppDataSource.query(`SELECT * FROM crypto_v2 where id = ${id}`)
-    res.json(oneCrypto)
+    const oneCrypto = await AppDataSource.getRepository(CryptoV2).findOneBy({
+        id: Number(req.params.id)
+    })
+    res.send(oneCrypto)
 })
 
-app.post('/cryptos/create/', async function (req: Request, res: Response){
-    const {code, value} = req.body
-    console.log(`INSERT INTO crypto_v2 (code, value) values (${code}, ${value})`)
-    const newCrypto = await AppDataSource.query(`INSERT INTO crypto_v2 (code, value) values ('${code}', '${value}')`)
-    res.json(newCrypto)
+app.post('/cryptos/create', async function (req: Request, res: Response){
+    const newCrypto =  AppDataSource.getRepository(CryptoV2).create(req.body)
+    const result = await AppDataSource.getRepository(CryptoV2).save(newCrypto)
+    res.send(result)
 })
-
 
 app.put('/cryptos/update/:id', async function (req: Request, res: Response) {
-    const id = req.params.id
-    const {code, value} = req.body
-    const updateCrypto = await AppDataSource.query(`UPDATE crypto_v2 SET code = '${code}', value = '${value}' WHERE id = '${id}'`)
-    res.json(updateCrypto)
+    const oneCrypto = await AppDataSource.getRepository(CryptoV2).findOneBy({
+        id: Number(req.params.id)
+    })
+    AppDataSource.getRepository(CryptoV2).merge(oneCrypto, req.body)
+    const results = await AppDataSource.getRepository(CryptoV2).save(oneCrypto)
+    res.send(results)
 })
 
 app.delete("/cryptos/delete/:id", async function (req: Request, res: Response) {
-    const id = req.params.id
-    const deleteCrypto = await AppDataSource.query(`DELETE FROM crypto_v2 where id = '${id}'`)
-    res.json(deleteCrypto)
+    const results = await AppDataSource.getRepository(CryptoV2).delete(req.params.id)
+    res.send(results)
 })
 
 

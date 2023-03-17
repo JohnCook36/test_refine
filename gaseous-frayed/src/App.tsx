@@ -20,7 +20,7 @@ const App: React.FC = () => {
                     {
                         name: 'Cryptos',
                         list: "/cryptos",
-                        show: "/cryptos/show/:id",
+                        show: "/cryptos/:id",
                         create: "/cryptos/create",
                         edit: "/cryptos/update/:id",
                         meta: { canDelete: true },
