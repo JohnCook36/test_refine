@@ -1,40 +1,40 @@
 import {AppDataSource} from "../data-source";
-import {Request} from "express";
+import {Request, Response} from "express";
+import {CryptoV2} from "../entity/CryptoV2";
 
 class useController{
 
-    async createCrypto(req, res) {
-        const {code, persentage} = req.body
-
-        const newCrypto = await AppDataSource.query(`INSERT INTO crypto (code, persentage) values ($1, $2)`, [code, persentage])
-
-        await AppDataSource.query(
-            `INSERT INTO crypto (code, persentage) values ${newCrypto}`
-        )
-        res.send(newCrypto.rows)
+    async getCryptos(req: Request, res: Response) {
+        const cryptos = await AppDataSource.getRepository(CryptoV2).find()
+        res.json(cryptos)
     }
 
-    async getCrypto(req, res) {
-        let all = await AppDataSource.query(`SELECT * FROM crypto`)
-        res.send(all)
+    async getOneCrypto(req: Request, res: Response) {
+        const oneCrypto = await AppDataSource.getRepository(CryptoV2).findOneBy({
+            id: Number(req.params.id)
+        })
+        res.send(oneCrypto)
     }
 
-    async getOneCrypto(req, res) {
-        const id = await req.params.id
-        const quarty = await AppDataSource.query(`SELECT * FROM crypto where id = $1`, [id])
-        res.send(quarty.rows)
+    async createCrypto (req: Request, res: Response){
+        const newCrypto =  AppDataSource.getRepository(CryptoV2).create(req.body)
+        const result = await AppDataSource.getRepository(CryptoV2).save(newCrypto)
+        res.send(result)
     }
 
-    async updateCrypto(req, res) {
-        const {id, code, persentage} = req.body
-        const quarty = await AppDataSource.query(`UPDATE crypto set code = $1, persentage = $2 where id = $3 RETURNING *`, [code, persentage, id])
-        res.send(quarty.rows)
+    async updateCrypto (req: Request, res: Response) {
+        const oneCrypto = await AppDataSource.getRepository(CryptoV2).findOneBy({
+            id: Number(req.params.id)
+        })
+        AppDataSource.getRepository(CryptoV2).merge(oneCrypto, req.body)
+        const results = await AppDataSource.getRepository(CryptoV2).save(oneCrypto)
+        res.send(results)
     }
 
-    async deleteCrypto(req, res) {
-        const id = await req.params.id
-        const quarty = await AppDataSource.query(`DELETE FROM crypto where id = $1`, [id])
-        res.send(quarty.rows)
+    async deleteCrypto (req: Request, res: Response) {
+        const results = await AppDataSource.getRepository(CryptoV2).delete(req.params.id)
+        res.send(results)
     }
 }
 
+module.exports = new useController()
