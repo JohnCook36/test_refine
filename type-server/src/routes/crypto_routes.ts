@@ -1,11 +1,11 @@
-import { Router } from 'express'
+const Router = require('express')
+const router = new Router
 const useController = require('../controller/crypto_controller')
 
-const router = new Router
+router.get(`/cryptos`, useController.getCryptos)
+router.get(`/cryptos/:id`, useController.getOneCrypto)
+router.post('/cryptos', useController.createCrypto)
+router.patch('/cryptos/:id', useController.updateCrypto)
+router.delete('/cryptos/:id', useController.deleteCrypto)
 
-
-router.post('/crypto/create', useController.createCrypto)
-router.get('/crypto', useController.getCrypto)
-router.get('/crypto/:id', useController.getOneCrypto)
-router.put('/crypto/edit/:id"', useController.updateCrypto)
-router.delete('/crypto/:id', useController.deleteCrypto)
+module.exports = router
