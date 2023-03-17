@@ -18,11 +18,11 @@ const App: React.FC = () => {
                 notificationProvider={notificationProvider}
                 resources={[
                     {
-                        name: 'Cryptos',
+                        name: 'cryptos',
                         list: "/cryptos",
-                        show: "/cryptos/:id",
-                        create: "/cryptos/create",
-                        edit: "/cryptos/update/:id",
+                        show: "cryptos/show/:id",
+                        create: "cryptos/create",
+                        edit: "cryptos/edit/:id",
                         meta: { canDelete: true },
                     },
                 ]}
@@ -40,7 +40,7 @@ const App: React.FC = () => {
                             <Route index element={<AntdInferencer />} />
                             <Route path="show/:id" element={<AntdInferencer />} />
                             <Route path="create" element={<AntdInferencer />} />
-                            <Route path="update/:id" element={<AntdInferencer />} />
+                            <Route path="edit/:id" element={<AntdInferencer />} />
                         </Route>
                         <Route path="*" element={<ErrorComponent />} />
                     </Route>

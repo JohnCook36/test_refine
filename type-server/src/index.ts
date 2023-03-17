@@ -32,13 +32,13 @@ app.get("/cryptos/:id", async function (req: Request, res: Response) {
     res.send(oneCrypto)
 })
 
-app.post('/cryptos/create', async function (req: Request, res: Response){
+app.post('/cryptos', async function (req: Request, res: Response){
     const newCrypto =  AppDataSource.getRepository(CryptoV2).create(req.body)
     const result = await AppDataSource.getRepository(CryptoV2).save(newCrypto)
     res.send(result)
 })
 
-app.put('/cryptos/update/:id', async function (req: Request, res: Response) {
+app.patch('/cryptos/:id', async function (req: Request, res: Response) {
     const oneCrypto = await AppDataSource.getRepository(CryptoV2).findOneBy({
         id: Number(req.params.id)
     })
@@ -47,7 +47,7 @@ app.put('/cryptos/update/:id', async function (req: Request, res: Response) {
     res.send(results)
 })
 
-app.delete("/cryptos/delete/:id", async function (req: Request, res: Response) {
+app.delete("/cryptos/:id", async function (req: Request, res: Response) {
     const results = await AppDataSource.getRepository(CryptoV2).delete(req.params.id)
     res.send(results)
 })
